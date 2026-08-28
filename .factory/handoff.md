@@ -1,5 +1,26 @@
 # Handoff — Symptom Visit Brief v1
 
+## Independent verification outcome — FAIL
+
+Candidate `1ca26c9067126f2db9def95ecc9d86a8786d90ae` was independently verified
+against <https://symptom-visit-brief.sociobot.in> on 2026-08-28 UTC and **must
+not be released**. The live deployment is byte-for-byte the candidate build,
+not a deployment-only failure.
+
+Release blockers are: missing `.factory/claims.json` (therefore no required
+claim tests), no one-click sample-data action on the first screen, and no
+isolated demo implementation at `/demo` or `?demo=1`. Direct `?demo=1` shares
+normal IndexedDB records instead of using a demo namespace. The first screen
+also does not plainly name the intended user. See
+[`verification.md`](verification.md) for exact test output, live observations,
+and all severities.
+
+The core app build/unit/E2E tests, local offline reload, rate limit, and live
+byte comparison passed. Remaining non-blocking findings include a sub-3:1
+light-theme focus outline, absent CSP/immutable asset caching, missing
+canonical/social metadata and 404 behavior, and high/critical dev-tool audit
+advisories.
+
 ## What was built
 
 - A production-ready Vite + vanilla TypeScript PWA for private symptom observations.
