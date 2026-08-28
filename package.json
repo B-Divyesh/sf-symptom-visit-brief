@@ -1,0 +1,24 @@
+{
+  "name": "symptom-visit-brief",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/build-sw.mjs",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:e2e": "npm run build && playwright test",
+    "check": "tsc --noEmit && npm test && npm run build"
+  },
+  "dependencies": {
+    "jspdf": "2.5.2"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.58.2",
+    "typescript": "5.7.3",
+    "vite": "6.1.0",
+    "vitest": "3.0.6"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "generator": "/opt/fleet/lib/gen-image.sh",
+  "deployment": "factory-image",
+  "date": "2026-08-28",
+  "size": "1536x1024",
+  "quality": "high",
+  "prompt": "A refined editorial still life for a private symptom observation utility: abstract generative geometry on warm bone archival paper, a chronological constellation of six tactile paper discs connected by fine deep bottle-green ink lines, transparent oxidized-teal vellum rings indicating intensity, one muted saffron square marker, one small vermilion dot, a folded narrow paper timeline slip; precise but handmade, calm daylight from upper left, subtle paper fibers and embossed shadows, orthographic wide composition, ample quiet negative space, no people, no anatomy, no medication, no medical crosses, no screens, no readable text, no logos, no watermark, no gradients, no neon.",
+  "review": "Accepted: clean geometry, no text artifacts, anatomy, brands, or medical symbols. Palette and paper material match the thesis."
+}

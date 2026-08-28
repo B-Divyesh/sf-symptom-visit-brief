@@ -1,0 +1,11 @@
+{
+  "slug": "symptom-visit-brief",
+  "title": "Symptom Visit Brief",
+  "territory": "utilities",
+  "user": "A person with intermittent or hard-to-explain symptoms who needs to turn brief daily observations into a factual timeline a clinician can review.",
+  "smallest_useful_product": "A local-first daily check-in with symptom, severity, duration, trigger/context, and optional photo; it renders a date-bounded one-page PDF/CSV visit brief with plain counts and trends.",
+  "artifact_class": "pwa-offline",
+  "monetization": "one-time",
+  "constraints": "Keep records on device by default; make exports explicit; avoid medical-device claims and diagnostic scoring; accessible severity controls are required.",
+  "state": "RESEARCHED"
+}
