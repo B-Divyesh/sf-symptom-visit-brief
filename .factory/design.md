@@ -66,7 +66,7 @@ Color never carries state alone: severity always includes its number and text la
 - Negative list: no people, anatomy, pills, medical crosses, screens, charts with labels, readable text, logos, watermark, gradients, neon, glossy stock 3D.
 - Prompt: “A refined editorial still life for a private symptom observation utility: abstract generative geometry on warm bone archival paper, a chronological constellation of six tactile paper discs connected by fine deep bottle-green ink lines, transparent oxidized-teal vellum rings indicating intensity, one muted saffron square marker, one small vermilion dot, a folded narrow paper timeline slip; precise but handmade, calm daylight from upper left, subtle paper fibers and embossed shadows, orthographic wide composition, ample quiet negative space, no people, no anatomy, no medication, no medical crosses, no screens, no readable text, no logos, no watermark, no gradients, no neon.”
 - Generation: Sociobot factory image deployment via `/opt/fleet/lib/gen-image.sh`, 1536×1024, high quality, 2026-08-28. Original generated work for this product; source PNG and prompt sidecar retained in `assets/src/`.
-- Delivery: responsive WebP at 960 px and 560 px wide; mobile source ≤ 300 KB. The illustration is meaningful and receives descriptive alt text. Generated imagery is disclosed in the footer.
+- Delivery: responsive WebP at 960 px and 720 px wide; mobile source is 12 KB. The illustration is meaningful and receives descriptive alt text. Generated imagery is disclosed in the footer.
 
 ### Authored assets
 

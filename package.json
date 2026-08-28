@@ -12,11 +12,15 @@
     "check": "tsc --noEmit && npm test && npm run build"
   },
   "dependencies": {
-    "jspdf": "2.5.2"
+    "jspdf": "4.2.1"
+  },
+  "overrides": {
+    "playwright-core": "1.58.2"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.10.2",
     "@playwright/test": "1.58.2",
+    "@types/node": "22.13.4",
     "typescript": "5.7.3",
     "vite": "6.1.0",
     "vitest": "3.0.6"
