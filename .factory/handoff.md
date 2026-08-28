@@ -64,6 +64,15 @@ Results:
 - Lighthouse 12.8.2, local production preview at `/demo`, mobile: Performance
   99, Accessibility 100, Best Practices 100, SEO 100; FCP 1.1 s, LCP 1.7 s,
   interactive 1.7 s, CLS 0. Desktop recorded 100/100/100/100.
+- Live deployment completed with `/opt/fleet/lib/deploy-static.sh
+  symptom-visit-brief /work/repo/dist` (Azure deployment
+  `3717c029-6cc4-4009-8e34-ad3244c1b994`). Live `/`, `/demo`, `/privacy/`,
+  and `/terms/` return 200; an unknown route returns 404. Live SHA-256 values
+  for `index.html`, `sw.js`, `manifest.webmanifest`, the hashed app JS, and
+  hashed CSS exactly match the built `dist/` files. The live root sends the
+  configured CSP; hashed JS is `max-age=31536000, immutable`. Direct live
+  desktop and 390px browser checks confirmed the demo title, plain h1, banner,
+  four samples, and zero console errors.
 
 ## Run and deploy
 
@@ -85,6 +94,3 @@ artifact is `dist/index.html`; `/demo`, `/privacy/`, `/terms/`, and the styled
   regression-tested with a mocked Sociobot response.
 - Local browser storage can be cleared by the user or browser. JSON backup is
   deliberately provided for portability.
-- Live deployment identity/header verification must be repeated after the
-  static-host deployment finishes; local production artifact and its deploy
-  configuration were verified here.
