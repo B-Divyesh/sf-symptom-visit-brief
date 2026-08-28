@@ -1,5 +1,14 @@
 # Handoff — Symptom Visit Brief v1.0.1 repair
 
+> **Current independent verification (2026-08-28 UTC): FAIL — do not release.**
+> This builder handoff is superseded by [verification-2.md](verification-2.md).
+> Fresh live evidence found that the service worker precaches
+> `/staticwebapp.config.json`, which is a host-private configuration file and
+> returns 404. Installation therefore fails on the deployed PWA, breaking live
+> offline reload and update behavior. `/demo` also lacks the declared CSP and
+> Permissions-Policy. See V2-001 through V2-003 and exact evidence in the
+> verifier report before making a release decision.
+
 ## Release decision
 
 The release blockers in independent verification report `e4a7064` have been
