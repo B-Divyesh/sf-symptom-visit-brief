@@ -1,7 +1,7 @@
 {
   "name": "symptom-visit-brief",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -22,7 +22,7 @@
     "@playwright/test": "1.58.2",
     "@types/node": "22.13.4",
     "typescript": "5.7.3",
-    "vite": "6.1.0",
-    "vitest": "3.0.6"
+    "vite": "^6.4.3",
+    "vitest": "^3.2.7"
   }
 }

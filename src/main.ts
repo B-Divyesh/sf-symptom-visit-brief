@@ -13,6 +13,8 @@ import {
   trendSentence
 } from './domain';
 import {
+  clearCurrentStorage,
+  demoMode,
   getSettings,
   listObservations,
   mergeImport,
@@ -37,6 +39,49 @@ let editingId = '';
 let paid = cachedUnlock();
 let filter: DateFilter = { from: '', to: '', query: '' };
 
+const sampleObservations: Observation[] = [
+  {
+    id: 'demo-dizziness-1',
+    occurredAt: '2026-08-24T08:10:00.000Z',
+    symptom: 'Dizziness after standing',
+    severity: 6,
+    durationMinutes: 8,
+    context: 'Stood up after working at the kitchen table. Had eaten breakfast and one glass of water.',
+    createdAt: '2026-08-24T08:20:00.000Z',
+    updatedAt: '2026-08-24T08:20:00.000Z'
+  },
+  {
+    id: 'demo-dizziness-2',
+    occurredAt: '2026-08-25T17:35:00.000Z',
+    symptom: 'Dizziness after bus ride',
+    severity: 4,
+    durationMinutes: 12,
+    context: 'Started when I stepped off the bus. I had walked for ten minutes before boarding.',
+    createdAt: '2026-08-25T17:50:00.000Z',
+    updatedAt: '2026-08-25T17:50:00.000Z'
+  },
+  {
+    id: 'demo-headache-1',
+    occurredAt: '2026-08-26T13:15:00.000Z',
+    symptom: 'Headache behind left eye',
+    severity: 7,
+    durationMinutes: 95,
+    context: 'Began after lunch during a bright video call. Improved after resting in a dim room.',
+    createdAt: '2026-08-26T15:00:00.000Z',
+    updatedAt: '2026-08-26T15:00:00.000Z'
+  },
+  {
+    id: 'demo-fatigue-1',
+    occurredAt: '2026-08-27T18:40:00.000Z',
+    symptom: 'Sudden fatigue',
+    severity: 5,
+    durationMinutes: 70,
+    context: 'Needed to sit down while making dinner. Slept seven hours the night before.',
+    createdAt: '2026-08-27T20:00:00.000Z',
+    updatedAt: '2026-08-27T20:00:00.000Z'
+  }
+];
+
 const icon = (name: 'plus' | 'timeline' | 'brief' | 'lock' | 'download' | 'photo'): string => {
   const paths = {
     plus: '<path d="M12 5v14M5 12h14"/>',
@@ -51,6 +96,7 @@ const icon = (name: 'plus' | 'timeline' | 'brief' | 'lock' | 'download' | 'photo
 
 const renderShell = (): void => {
   app.innerHTML = `
+    ${demoMode ? `<aside class="demo-banner" aria-label="Demo mode"><strong>Demo — sample data, nothing is saved to your records</strong><span>Explore four realistic observations in a separate workspace.</span><div><button type="button" id="reset-demo">Reset demo</button><button type="button" id="start-real">Start for real</button></div></aside>` : ''}
     <header class="site-header">
       <div class="header-inner">
         <a class="wordmark" href="/" aria-label="Symptom Visit Brief home">
@@ -58,9 +104,10 @@ const renderShell = (): void => {
           <span>Symptom Visit Brief</span>
         </a>
         <nav aria-label="Main navigation">
+          <a href="/demo">Demo</a>
           <a href="#check-in">Check-in</a>
           <a href="#timeline">Timeline</a>
-          <a href="#brief">Brief</a>
+          <a href="/privacy/">Privacy</a>
         </nav>
         <span class="network-state" id="network-state"><i></i><span>On device</span></span>
       </div>
@@ -68,14 +115,15 @@ const renderShell = (): void => {
     <main id="main">
       <section class="hero" aria-labelledby="page-title">
         <div class="hero-copy">
-          <p class="eyebrow">A clearer story for the appointment</p>
-          <h1 id="page-title">Small observations.<br><em>One useful timeline.</em></h1>
-          <p class="lede">Capture what happened while it’s fresh. Bring a factual, date-bounded brief to your visit—without an account or cloud sync.</p>
+          <p class="eyebrow">A factual memory aid for appointments</p>
+          <h1 id="page-title">Turn symptom notes into a visit brief</h1>
+          <p class="lede">For people with intermittent symptoms who need a factual timeline for a clinician visit.</p>
           <div class="hero-actions">
-            <a class="button primary" href="#check-in">${icon('plus')} Record an observation</a>
-            <a class="text-link" href="#brief">Prepare a visit brief <span aria-hidden="true">→</span></a>
+            <a class="button primary" href="/demo">Try it with sample data</a>
+            <a class="text-link" href="#check-in">Record your first observation <span aria-hidden="true">→</span></a>
           </div>
-          <p class="privacy-note"><span aria-hidden="true">◉</span> Your health notes stay in this browser unless you export them.</p>
+          <p class="action-note">The demo loads four sample observations in a separate workspace.</p>
+          <ul class="plain-facts"><li>Works offline after your first visit.</li><li>Records stay in this browser unless you export them.</li><li>Core features are free. Brief Plus costs $9 once.</li></ul>
         </div>
         <picture class="hero-art">
           <source media="(max-width: 640px)" srcset="/assets/signal-constellation-720.webp" />
@@ -173,7 +221,7 @@ const renderShell = (): void => {
     <footer>
       <div><span class="wordmark footer-mark"><span class="mark" aria-hidden="true"><i></i></span><span>Symptom Visit Brief</span></span><p>Private notes, shaped for a useful conversation.</p></div>
       <nav aria-label="Legal and product links"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/B-Divyesh/sf-symptom-visit-brief" rel="noreferrer">Source</a></nav>
-      <p class="provenance">The paper constellation illustration was generated for this product with the Sociobot factory image model.</p>
+      <p class="provenance">The paper constellation illustration was generated for this product with the Sociobot factory image model. <span>Version 1.0.1 · Built by Param Factory.</span></p>
     </footer>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   `;
@@ -480,6 +528,23 @@ const bindEvents = (): void => {
     });
   });
   byId<HTMLButtonElement>('clear-filters').addEventListener('click', clearFilters);
+  if (demoMode) {
+    byId<HTMLButtonElement>('reset-demo').addEventListener('click', async () => {
+      await clearCurrentStorage();
+      await Promise.all(sampleObservations.map((entry) => saveObservation(entry)));
+      observations = await listObservations();
+      settings = await getSettings();
+      filter = { from: '', to: '', query: '' };
+      resetForm();
+      clearFilters();
+      renderPresets();
+      showToast('Demo reset to four sample observations.');
+    });
+    byId<HTMLButtonElement>('start-real').addEventListener('click', async () => {
+      await clearCurrentStorage();
+      window.location.assign('/');
+    });
+  }
   byId<HTMLButtonElement>('export-csv').addEventListener('click', () => {
     const entries = filterObservations(observations, filter);
     download(`\ufeff${toCsv(entries)}`, 'text/csv;charset=utf-8', `symptom-visit-brief-${filter.from || 'all'}.csv`);
@@ -538,6 +603,10 @@ const registerServiceWorker = async (): Promise<void> => {
 };
 
 const init = async (): Promise<void> => {
+  if (demoMode) {
+    document.title = 'Demo — Symptom Visit Brief';
+    document.body.classList.add('demo-mode');
+  }
   renderShell();
   bindEvents();
   resetForm();
@@ -545,14 +614,18 @@ const init = async (): Promise<void> => {
   acceptLicenseFromUrl();
   paid = cachedUnlock();
   try {
+    if (demoMode && !(await listObservations()).length) {
+      await Promise.all(sampleObservations.map((entry) => saveObservation(entry)));
+    }
     [observations, settings] = await Promise.all([listObservations(), getSettings()]);
     renderPresets();
     renderTimeline();
   } catch (error) {
-    byId<HTMLDivElement>('timeline-list').innerHTML = `<div class="error-state"><h3>Your on-device records could not be opened.</h3><p>${escapeHtml(error instanceof Error ? error.message : 'Reload the page and try again.')}</p><button class="button secondary" type="button" onclick="location.reload()">Reload app</button></div>`;
+    byId<HTMLDivElement>('timeline-list').innerHTML = `<div class="error-state"><h3>Your on-device records could not be opened.</h3><p>${escapeHtml(error instanceof Error ? error.message : 'Reload the page and try again.')}</p><button class="button secondary" id="reload-app" type="button">Reload app</button></div>`;
+    byId<HTMLButtonElement>('reload-app').addEventListener('click', () => location.reload());
   }
   renderLicense();
-  if (localStorage.getItem('sb_license:symptom-visit-brief')) {
+  if (localStorage.getItem(`${demoMode ? 'demo:' : ''}sb_license:symptom-visit-brief`)) {
     verifyLicense().then((valid) => {
       if (valid !== paid) { paid = valid; renderLicense(valid ? '' : 'License no longer active.'); renderPresets(); renderTimeline(); }
     }).catch(() => { /* Keep the cached experience while offline. */ });

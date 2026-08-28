@@ -1,0 +1,5 @@
+body { margin: 0; background: #f5f1e8; color: #182522; font: 18px/1.55 system-ui, sans-serif; }
+.wrap { max-width: 38rem; margin: 12vh auto; padding: 24px; }
+h1 { font: 650 2.8rem/1 Georgia, serif; }
+a { color: #004b46; font-weight: 700; }
+a:focus-visible { outline: 3px solid #006b63; outline-offset: 4px; }

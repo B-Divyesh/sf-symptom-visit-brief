@@ -1,5 +1,7 @@
 const SLUG = 'symptom-visit-brief';
-const LICENSE_KEY = `sb_license:${SLUG}`;
+const isDemo = typeof window !== 'undefined' &&
+  (window.location.pathname.replace(/\/$/, '') === '/demo' || new URLSearchParams(window.location.search).get('demo') === '1');
+const LICENSE_KEY = `${isDemo ? 'demo:' : ''}sb_license:${SLUG}`;
 const VERDICT_KEY = `${LICENSE_KEY}:verdict`;
 const API_BASE = import.meta.env.VITE_BILLING_API_BASE || 'https://api.sociobot.in/api/v1';
 

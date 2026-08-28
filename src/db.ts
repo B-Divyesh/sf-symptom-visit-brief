@@ -1,6 +1,10 @@
 import type { AppSettings, Observation } from './types';
 
-const DB_NAME = 'symptom-visit-brief';
+export const demoMode =
+  typeof window !== 'undefined' &&
+  (window.location.pathname.replace(/\/$/, '') === '/demo' || new URLSearchParams(window.location.search).get('demo') === '1');
+
+const DB_NAME = demoMode ? 'demo:symptom-visit-brief' : 'symptom-visit-brief';
 const DB_VERSION = 1;
 const defaultSettings: AppSettings = { key: 'app', presets: [], displayName: '', briefTitle: '' };
 
@@ -52,6 +56,15 @@ export const getSettings = async (): Promise<AppSettings> => {
 export const saveSettings = async (settings: AppSettings): Promise<void> => {
   const db = await openDatabase();
   await requestResult(db.transaction('settings', 'readwrite').objectStore('settings').put(settings));
+};
+
+export const clearCurrentStorage = async (): Promise<void> => {
+  const db = await openDatabase();
+  const transaction = db.transaction(['observations', 'settings'], 'readwrite');
+  await Promise.all([
+    requestResult(transaction.objectStore('observations').clear()),
+    requestResult(transaction.objectStore('settings').clear())
+  ]);
 };
 
 export const mergeImport = async (incoming: Observation[]): Promise<{ added: number; updated: number }> => {

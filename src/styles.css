@@ -52,7 +52,7 @@ h3 { line-height: 1.2; }
 
 .skip-link { position: fixed; z-index: 999; left: 16px; top: 12px; padding: 10px 14px; color: #fff; background: var(--teal-deep); transform: translateY(-180%); border-radius: 6px; }
 .skip-link:focus { transform: none; }
-:focus-visible { outline: 3px solid #d19a15; outline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .hidden { display: none !important; }
 .muted { color: var(--muted); font-style: italic; }
@@ -73,6 +73,15 @@ h3 { line-height: 1.2; }
 .network-state.offline { color: var(--saffron); border-color: currentColor; }
 .network-state.offline i { background: currentColor; }
 
+.demo-banner { position: fixed; z-index: 90; left: 50%; bottom: calc(12px + env(safe-area-inset-bottom)); width: min(760px, calc(100% - 24px)); min-height: 64px; padding: 10px 12px 10px 16px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px 16px; color: #f4f1e8; background: #183733; border: 1px solid #71948e; border-radius: 12px; box-shadow: 0 18px 45px rgb(0 0 0 / 24%); transform: translateX(-50%); }
+.demo-banner strong { font-size: 0.94rem; }
+.demo-banner > span { color: #c9d5d1; font-size: 0.84rem; }
+.demo-banner > div { display: flex; gap: 8px; }
+.demo-banner button { min-height: 44px; padding: 7px 11px; color: #fff; background: transparent; border: 1px solid #9ce8dd; border-radius: 7px; font-weight: 700; cursor: pointer; }
+.demo-banner button:last-child { color: #102b28; background: #9ce8dd; }
+.demo-mode { padding-bottom: 86px; }
+.demo-mode .toast { bottom: calc(94px + env(safe-area-inset-bottom)); }
+
 main { overflow: hidden; }
 .hero { width: min(1180px, calc(100% - 40px)); min-height: 620px; margin: 0 auto; padding: 70px 0 76px; display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr); align-items: center; gap: 56px; }
 .eyebrow, .step { margin-bottom: 14px; color: var(--teal-deep); font-size: 0.78rem; font-weight: 750; letter-spacing: 0.15em; text-transform: uppercase; }
@@ -88,8 +97,9 @@ main { overflow: hidden; }
 .button.quiet { color: var(--muted); background: transparent; }
 .button.compact { min-height: 44px; padding: 8px 14px; }
 .text-link { min-height: 44px; display: inline-flex; align-items: center; gap: 7px; font-weight: 700; text-decoration-thickness: 1px; }
-.privacy-note { margin: 26px 0 0; color: var(--muted); font-size: 0.92rem; }
-.privacy-note span { margin-right: 7px; color: var(--teal); }
+.action-note { margin: 10px 0 0; color: var(--muted); font-size: 0.88rem; }
+.plain-facts { margin: 24px 0 0; padding: 17px 0 0; display: grid; gap: 7px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 0.92rem; list-style: none; }
+.plain-facts li::before { content: '◉'; margin-right: 9px; color: var(--teal); }
 .hero-art { position: relative; display: block; }
 .hero-art::before, .hero-art::after { content: ''; position: absolute; z-index: -1; border: 1px solid var(--rule); border-radius: 50%; }
 .hero-art::before { width: 72%; aspect-ratio: 1; right: -15%; top: -25%; }
@@ -109,7 +119,7 @@ form > label, .form-row label, .license-panel label { display: grid; gap: 7px; m
 input, textarea, select { width: 100%; min-height: 48px; padding: 11px 12px; color: var(--ink); background: var(--paper); border: 1px solid #9c9d94; border-radius: 7px; font-weight: 450; }
 textarea { resize: vertical; min-height: 94px; }
 input:hover, textarea:hover, select:hover { border-color: var(--teal); }
-input:focus, textarea:focus, select:focus { border-color: var(--teal); outline: 3px solid rgb(0 107 99 / 18%); }
+input:focus, textarea:focus, select:focus { border-color: var(--teal); outline: 3px solid var(--teal); outline-offset: 2px; }
 input:user-invalid { border-color: var(--red); }
 .form-row { display: grid; gap: 14px; }
 .form-row.two-up { grid-template-columns: 1fr 1fr; }
@@ -128,7 +138,7 @@ input[type='range'] { min-height: 44px; padding: 0; accent-color: var(--teal); b
 .photo-control { min-height: 68px; padding: 10px 14px; display: flex !important; grid-template-columns: none !important; align-items: center; gap: 12px !important; color: var(--teal-deep); border: 1px dashed var(--teal); border-radius: 8px; cursor: pointer; }
 .photo-control span { display: grid; }
 .photo-control input, .file-button input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.photo-control:focus-within, .file-button:focus-within { outline: 3px solid #d19a15; outline-offset: 3px; }
+.photo-control:focus-within, .file-button:focus-within { outline: 3px solid var(--teal); outline-offset: 3px; }
 .photo-preview { margin: -8px 0 18px; display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 0.86rem; }
 .photo-preview img { width: 62px; height: 62px; object-fit: cover; border-radius: 7px; }
 .form-error { min-height: 1.5em; margin-bottom: 8px; color: var(--red); font-weight: 650; }
@@ -235,6 +245,8 @@ footer nav { display: flex; gap: 22px; }
 .legal-page p { max-width: 68ch; }
 .legal-lede { color: var(--muted); font-size: 1.2rem; }
 .legal-back { margin-top: 54px; }
+.not-found-page { min-height: 62vh; display: grid; place-items: center; padding: 80px 20px; }
+.not-found-page section { width: min(680px, 100%); padding: 48px; background: var(--surface); border: 1px solid var(--rule); border-radius: 5px 24px 24px; box-shadow: var(--shadow); }
 
 @keyframes node-in { from { opacity: 0; transform: translateY(6px); } }
 
@@ -256,6 +268,12 @@ footer nav { display: flex; gap: 22px; }
 }
 
 @media (max-width: 640px) {
+  .demo-banner { bottom: calc(8px + env(safe-area-inset-bottom)); grid-template-columns: 1fr auto; gap: 4px 10px; }
+  .demo-banner > span { grid-column: 1; }
+  .demo-banner > div { grid-column: 2; grid-row: 1 / 3; flex-direction: column; }
+  .demo-banner button { min-width: 104px; }
+  .demo-mode { padding-bottom: 124px; }
+  .demo-mode .toast { bottom: calc(130px + env(safe-area-inset-bottom)); }
   .header-inner { min-height: 64px; }
   .wordmark { font-size: 0.94rem; }
   .mark { width: 30px; height: 30px; }

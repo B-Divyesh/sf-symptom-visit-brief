@@ -1,0 +1,58 @@
+[
+  {
+    "id": "demo-sandbox",
+    "claim": "The demo loads four sample observations in a separate workspace",
+    "where": "landing action note, demo banner, README",
+    "test": "npm run test:e2e -- --grep @claim:demo-sandbox",
+    "sandbox": "fresh browser context; create a real observation; enter /demo; assert four shipped samples and no real observation; add a demo observation and return home"
+  },
+  {
+    "id": "offline-reload",
+    "claim": "Works offline after your first visit",
+    "where": "landing plain facts, README",
+    "test": "npm run test:e2e -- --grep @claim:offline-reload",
+    "sandbox": "fresh browser context; open /demo once; go offline; reload; assert the four shipped observations remain visible"
+  },
+  {
+    "id": "on-device-records",
+    "claim": "Records stay in this browser unless you export them",
+    "where": "landing plain facts, README, privacy",
+    "test": "npm run test:e2e -- --grep @claim:on-device-records",
+    "sandbox": "fresh browser context; write a real observation; open /demo; add a demo observation; assert the namespaces and visible records remain isolated"
+  },
+  {
+    "id": "csv-export",
+    "claim": "Exports CSV",
+    "where": "README, Export CSV button",
+    "test": "npm run test:e2e -- --grep @claim:csv-export",
+    "sandbox": "fresh browser context; use /demo; download CSV; assert its header and each of the four sample records"
+  },
+  {
+    "id": "pdf-export",
+    "claim": "Exports a one-page PDF",
+    "where": "README, Export one-page PDF button",
+    "test": "npm run test:e2e -- --grep @claim:pdf-export",
+    "sandbox": "fresh browser context; use /demo; download PDF; assert a non-empty PDF with one page marker"
+  },
+  {
+    "id": "json-backup",
+    "claim": "Exports a JSON backup",
+    "where": "README, Export backup button",
+    "test": "npm run test:e2e -- --grep @claim:json-backup",
+    "sandbox": "fresh browser context; use /demo; download JSON; assert schema version and all four sample records"
+  },
+  {
+    "id": "no-third-party-tracking",
+    "claim": "There are no analytics, ads, runtime CDNs, or third-party scripts",
+    "where": "README, privacy",
+    "test": "npm run test:e2e -- --grep @claim:no-third-party-tracking",
+    "sandbox": "fresh browser context; capture every request during the /demo flow; assert every URL is same-origin"
+  },
+  {
+    "id": "plus-price",
+    "claim": "Brief Plus costs $9 once",
+    "where": "landing plain facts, Brief Plus section, README, terms",
+    "test": "npm run test:e2e -- --grep @claim:plus-price",
+    "sandbox": "fresh browser context; use /demo; assert the $9 one-time price and checkout path are visible"
+  }
+]
