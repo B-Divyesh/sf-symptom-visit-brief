@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 import { resolve } from 'node:path';
 
 export default defineConfig({
+  test: {
+    include: ['tests/*.test.ts']
+  },
   build: {
     target: 'es2022',
     sourcemap: false,

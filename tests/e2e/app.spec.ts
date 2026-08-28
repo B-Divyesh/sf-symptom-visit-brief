@@ -55,3 +55,14 @@ test('legal pages have landmarks and one heading', async ({ page }) => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
   }
 });
+
+test('accepts and verifies a returned Sociobot license', async ({ page }) => {
+  await page.route('https://api.sociobot.in/api/v1/products/symptom-visit-brief/verify**', async (route) => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ valid: true, reason: 'ok', expires_at: null }) });
+  });
+  await page.goto('/?license=test-license-token');
+  await expect(page.getByText('Brief Plus is unlocked on this device.')).toBeVisible();
+  expect(new URL(page.url()).searchParams.has('license')).toBe(false);
+  expect(await page.evaluate(() => localStorage.getItem('sb_license:symptom-visit-brief'))).toBe('test-license-token');
+  await expect(page.getByRole('button', { name: 'Save Plus settings' })).toBeVisible();
+});
