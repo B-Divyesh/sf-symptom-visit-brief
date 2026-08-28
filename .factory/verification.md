@@ -94,6 +94,12 @@ I additionally exercised the local production preview at 390 px and desktop:
 - Manifest, service worker, offline reload, and local IndexedDB persistence are
   present and behaved as described above. The existing suite also verifies the
   offline reload path.
+- PWA update notification: with a controlled local production page, I delivered
+  an `UPDATE_READY` service-worker message and verified the visible “A fresh
+  version is ready.” refresh toast. The generated worker precaches the shell,
+  calls `skipWaiting()`/`clients.claim()`, and sends that message after
+  activation. (A real version replacement was not available from the deployed
+  candidate to force an end-to-end update cycle.)
 - Billing verify endpoint rate-limit test:
   `GET /api/v1/products/symptom-visit-brief/verify?license=…`, 60 rapid
   requests at concurrency 30, returned **30 × 200** then **30 × 429**. 429
