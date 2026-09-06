@@ -4,8 +4,9 @@
 superseded. The deployed implementation is
 `2120af7ae8fd19c83413930764fae189994d610e`; it contains the PWA repair in
 `298a16314d0fb965f5e5618e08cc0312955403e3` and the versioned release update.
-The preceding independent-verification documentation was
-`27a5af380b170d72d9b35410a87f614502365325`.
+The verification handoff documentation commit is
+`905048b` (this follow-up commit only records that SHA pointer). The preceding
+independent-verification documentation was `27a5af380b170d72d9b35410a87f614502365325`.
 
 ## What changed
 
