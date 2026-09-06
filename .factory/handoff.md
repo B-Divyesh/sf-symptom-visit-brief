@@ -1,52 +1,43 @@
-# Handoff — Symptom Visit Brief v1.0.1 repair
+# Handoff — Symptom Visit Brief v1.0.2
 
-> **Current independent verification (2026-08-28 UTC): FAIL — do not release.**
-> This builder handoff is superseded by [verification-2.md](verification-2.md).
-> Fresh live evidence found that the service worker precaches
-> `/staticwebapp.config.json`, which is a host-private configuration file and
-> returns 404. Installation therefore fails on the deployed PWA, breaking live
-> offline reload and update behavior. `/demo` also lacks the declared CSP and
-> Permissions-Policy. See V2-001 through V2-003 and exact evidence in the
-> verifier report before making a release decision.
+**Release decision: PASS.** The failed candidate `5be1ad3` must remain
+superseded. The deployed implementation is
+`2120af7ae8fd19c83413930764fae189994d610e`; it contains the PWA repair in
+`298a16314d0fb965f5e5618e08cc0312955403e3` and the versioned release update.
+The preceding independent-verification documentation was
+`27a5af380b170d72d9b35410a87f614502365325`.
 
-## Release decision
+## What changed
 
-The release blockers in independent verification report `e4a7064` have been
-reproduced and repaired. The production artifact remains a static Vite PWA;
-deploy `dist/` with its included `staticwebapp.config.json`.
+- **V2-001, live PWA installation:** the service-worker generator excludes
+  `staticwebapp.config.json`. Azure Static Web Apps consumes that deployment
+  file but deliberately returns 404 for it, so precaching it had made
+  `cache.addAll` reject and discarded the registration. Playwright now uses a
+  host-equivalent preview that also hides that file, so the offline claim fails
+  locally if this mistake returns.
+- **V2-002, `/demo` policy:** security headers moved to Static Web Apps
+  `globalHeaders`. `/demo` now receives the same CSP, Permissions-Policy,
+  strict referrer policy, and `nosniff` response header as the rest of the app.
+- **V2-003, claims:** the manifest now covers saved field/photo details,
+  date/text filtering, non-destructive newer-wins backup merge, Brief Plus
+  settings, and license-verification privacy. Each is an observable
+  `/demo`-based browser test. The untestable no-account/subscription wording was
+  removed instead of being asserted by source text.
+- Replaced remaining metaphor headings with task names, gave the closed
+  license-verify control an explicit accessible name, and widened the desktop
+  demo banner columns so its sample explanation remains readable.
+- Bumped the PWA cache/release to `1.0.2` (`start_url` `?v=2`) and checked a
+  real live v1.0.1 → v1.0.2 update notification.
 
-## Repairs
+The paid offer remains a $9 one-time Brief Plus license for reusable symptom
+presets and personalized visit-brief headings. Core capture and every export
+remain free. Public billing metadata is in
+`/work/.evidence/billing-offer.json`; the catalog description is in
+`.factory/catalog-description.txt` and `/work/.evidence/catalog-description.txt`.
 
-- **V-001 claims:** added [claims.json](claims.json), with one Playwright test
-  tag and exact fresh-demo command for the demo, offline, isolated storage,
-  CSV, one-page PDF, JSON backup, no-third-party-request, and $9 price claims.
-- **V-002 demo sandbox:** `/demo` and `?demo=1` now seed four realistic
-  observations into IndexedDB `demo:symptom-visit-brief`. Real records remain
-  in `symptom-visit-brief`; demo-only license state is separately namespaced.
-  The fixed demo banner includes **Reset demo** and **Start for real**. Leaving
-  demo clears demo records only. [demo.md](demo.md) documents the contract.
-- **V-003 first read:** the landing headline now says “Turn symptom notes into
-  a visit brief,” names people with intermittent symptoms, and puts **Try it
-  with sample data** on the first screen. [copy-audit.md](copy-audit.md)
-  records the first-screen wording audit.
-- **V-004 focus:** replaced the 2.23:1 saffron focus ring with teal in light
-  mode and its high-contrast teal token in dark mode. Browser regression tests
-  assert both computed colors.
-- **V-005 response policy:** added the packaged Static Web Apps configuration:
-  strict self-host CSP, no external script/style/font sources, explicit image
-  data/blob allowance for local photos, immutable hashed asset/font caching,
-  no-cache service-worker updates, referrer and permissions policies. Offline
-  CSS is now external so it remains valid under the CSP.
-- **V-006 routes/metadata:** added canonical, Open Graph, Twitter, SVG favicon,
-  1200×630 original-art social image, `/demo` rewrite, styled `404.html` with
-  real 404 response override, and sitemap entry. Each app/legal/404 page has
-  an appropriate title and semantic landmark regression coverage.
-- **V-007 audit:** upgraded Vite to 6.4.3 and Vitest to 3.2.7; both default and
-  production-only `npm audit` runs report zero vulnerabilities.
+## Verification
 
-## Verification (2026-08-28 UTC)
-
-From a clean `npm ci` install:
+From a fresh documented setup:
 
 ```sh
 npm ci
@@ -56,50 +47,67 @@ npm audit --omit=dev
 npm audit
 ```
 
-Results:
+- `npm run check`: TypeScript clean, 5/5 Vitest tests, and production build.
+- Every exact command in `.factory/claims.json` was run from the demo entry
+  point in desktop Chromium and Pixel 5. All 13 claims passed. The final full
+  suite passed **36/36** at v1.0.2.
+- Both audit commands report 0 vulnerabilities.
+- `git diff --check` passed before the handoff update.
+- The host-equivalent preview returns deployment configuration as 404, applies
+  `/demo` headers, serves a styled 404, and still passes the offline reload
+  claim. This is an outcome check, not a source-string configuration test.
+- Local Lighthouse 12.8.2 on `/demo`: Performance **98**, Accessibility
+  **100**, Best Practices **100**, SEO **100**; FCP 1.5 s, LCP 2.1 s,
+  interactive 2.1 s, CLS 0.
+- `verify-url.sh` passed locally and live for `/demo`: title, language, one
+  h1, main landmark, alt text, labelled controls, and no console errors.
+  Direct live Axe scans found 0 serious/critical findings on `/`, `/demo`,
+  `/privacy/`, and `/terms/`.
+- Initial app JS is 31.42 KB (10.93 KB gzip); CSS is 22.85 KB (6.10 KB gzip).
+  PDF code remains deferred. The self-hosted font is 34 KB.
 
-- `npm run check`: TypeScript clean; Vitest 5/5; production build passed.
-- `npm run test:e2e`: 26/26 passed in Chromium desktop (1440px) and Pixel 5
-  (390px) profiles. This covers all eight visitor-facing claims from a fresh
-  demo context, demo/real isolation, reset/exit, offline reload, CSV/PDF/JSON
-  contents, network privacy, pricing/free exports, record persistence/filter,
-  desktop/mobile keyboard skip link, axe serious/critical (zero), legal/404,
-  dark/light focus, deployment policy, and mocked license restoration.
-- `npm audit --omit=dev` and `npm audit`: zero vulnerabilities.
-- `git diff --check`: clean.
-- Production bundle: initial app JS 31.45 KB (10.99 KB gzip); CSS 22.82 KB
-  (6.10 KB gzip); self-hosted font 34 KB; social image 95 KB. PDF code remains
-  a deferred chunk and the first-load JS budget is below 200 KB.
-- Lighthouse 12.8.2, local production preview at `/demo`, mobile: Performance
-  99, Accessibility 100, Best Practices 100, SEO 100; FCP 1.1 s, LCP 1.7 s,
-  interactive 1.7 s, CLS 0. Desktop recorded 100/100/100/100.
-- Live deployment completed with `/opt/fleet/lib/deploy-static.sh
-  symptom-visit-brief /work/repo/dist` (Azure deployment
-  `3717c029-6cc4-4009-8e34-ad3244c1b994`). Live `/`, `/demo`, `/privacy/`,
-  and `/terms/` return 200; an unknown route returns 404. Live SHA-256 values
-  for `index.html`, `sw.js`, `manifest.webmanifest`, the hashed app JS, and
-  hashed CSS exactly match the built `dist/` files. The live root sends the
-  configured CSP; hashed JS is `max-age=31536000, immutable`. Direct live
-  desktop and 390px browser checks confirmed the demo title, plain h1, banner,
-  four samples, and zero console errors.
+## Live deployment and checks
+
+`/opt/fleet/lib/deploy-static.sh symptom-visit-brief /work/repo/dist` deployed
+the final artifact to <https://symptom-visit-brief.sociobot.in>.
+
+- All **29 public artifacts** SHA-256-match `dist/`. The 30th built file,
+  `staticwebapp.config.json`, is intentionally host-private and returns HTTP
+  404.
+- Live `/` and `/demo` return the intended CSP, Permissions-Policy,
+  `strict-origin-when-cross-origin` referrer policy, and `nosniff`.
+- A fresh desktop and Pixel 5 context both showed the job-focused h1, audience,
+  and **Try it with sample data** action before scrolling. The action loaded
+  four realistic observations, the persistent demo label, reset control, and
+  separate demo workspace. A temporary real observation did not appear in demo
+  and returned after **Start for real**. No console errors or third-party
+  requests occurred.
+- In fresh live contexts, service-worker control completed, offline reload
+  showed “Offline · still saving,” and all four samples remained visible.
+- A real live client with `visit-brief-1.0.1` cache received
+  `visit-brief-1.0.2` after deployment and displayed “A fresh version is
+  ready. Refresh”. Evidence: `/work/.evidence/live-update-check.json`.
+- The public license verification allowance was 30 HTTP 200 responses followed
+  by one HTTP 429 with `Retry-After: 3` for a dummy license token.
 
 ## Run and deploy
 
 ```sh
 npm ci
+npm run check
+npm run test:e2e
 npm run build
 ```
 
-Deploy exactly `dist/`, including `dist/staticwebapp.config.json`. The root
-artifact is `dist/index.html`; `/demo`, `/privacy/`, `/terms/`, and the styled
-404 are configured for the static host. Production billing defaults to
-`https://api.sociobot.in/api/v1`; staging may set
-`VITE_BILLING_API_BASE=https://pilot-api.sociobot.in/api/v1` at build time.
+Deploy `dist/`, including `dist/staticwebapp.config.json`, with the product
+static deployment configuration. `scripts/preview-static.mjs` is the local
+host-equivalent browser-test preview; unlike Vite preview, it hides the
+deployment config as production does.
 
 ## Known limits
 
-- The optional Brief Plus hosted checkout still requires factory registration
-  of the production/test product; the client return/verification flow is
-  regression-tested with a mocked Sociobot response.
-- Local browser storage can be cleared by the user or browser. JSON backup is
-  deliberately provided for portability.
+- Symptom records remain browser/device local and can be removed when site data
+  is cleared. JSON backup is the portability path.
+- No real purchase was made during verification. The live checkout route is
+  registered; return/restore and verification behavior are browser-tested with
+  a mocked valid license to avoid a charge.
