@@ -221,7 +221,7 @@ const renderShell = (): void => {
     <footer>
       <div><span class="wordmark footer-mark"><span class="mark" aria-hidden="true"><i></i></span><span>Symptom Visit Brief</span></span><p>Private symptom notes for clinician visits.</p></div>
       <nav aria-label="Legal and product links"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/B-Divyesh/sf-symptom-visit-brief" rel="noreferrer">Source</a></nav>
-      <p class="provenance">The paper constellation illustration was generated for this product with the Sociobot factory image model. <span>Version 1.0.1 · Built by Param Factory.</span></p>
+      <p class="provenance">The paper constellation illustration was generated for this product with the Sociobot factory image model. <span>Version 1.0.2 · Built by Param Factory.</span></p>
     </footer>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   `;

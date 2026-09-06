@@ -3,7 +3,7 @@
   "short_name": "Visit Brief",
   "description": "A private, offline symptom timeline and visit brief maker.",
   "id": "/?source=pwa",
-  "start_url": "/?v=1",
+  "start_url": "/?v=2",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
