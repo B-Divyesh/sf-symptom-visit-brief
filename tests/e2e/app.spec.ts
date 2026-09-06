@@ -115,8 +115,127 @@ test('@claim:plus-price shows the one-time $9 unlock without gating exports', as
   await page.goto('/demo');
   await expect(page.getByText('Core features are free. Brief Plus costs $9 once.')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Unlock Brief Plus · $9' })).toHaveAttribute('href', /\/products\/symptom-visit-brief\/checkout$/);
+  await expect(page.getByRole('button', { name: 'Save observation' })).toBeEnabled();
   await expect(page.getByRole('button', { name: 'Export CSV' })).toBeEnabled();
   await expect(page.getByRole('button', { name: 'Export one-page PDF' })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Export backup' })).toBeEnabled();
+});
+
+test('@claim:observation-details saves every observation detail and an optional photo', async ({ page }) => {
+  await page.goto('/demo');
+  await page.locator('#date').fill('2026-08-31');
+  await page.locator('#time').fill('09:25');
+  await page.locator('#symptom').fill('Detailed demo observation');
+  await page.locator('#severity').fill('8');
+  await page.locator('#duration').fill('2');
+  await page.locator('#duration-unit').selectOption('60');
+  await page.locator('#context').fill('Started after a bright morning walk.');
+  await page.locator('#photo').setInputFiles({
+    name: 'symptom-note.png',
+    mimeType: 'image/png',
+    buffer: await readFile('public/icons/icon-192.png')
+  });
+  await expect(page.getByRole('img', { name: 'Selected photo preview' })).toBeVisible();
+  await page.getByRole('button', { name: 'Save observation' }).click();
+
+  const entry = page.locator('.timeline-entry').filter({ has: page.getByRole('heading', { name: 'Detailed demo observation' }) });
+  await expect(entry.locator('time')).toHaveAttribute('datetime', /^2026-08-31T09:25/);
+  await expect(entry.locator('.severity-node')).toHaveAttribute('aria-label', 'Severity 8 out of 10, High');
+  await expect(entry).toContainText('2 hr');
+  await expect(entry).toContainText('Started after a bright morning walk.');
+  await expect(entry.getByRole('img', { name: 'Photo attached to Detailed demo observation observation' })).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Detailed demo observation' })).toBeVisible();
+  await expect(page.getByRole('img', { name: 'Photo attached to Detailed demo observation observation' })).toBeVisible();
+});
+
+test('@claim:timeline-filters narrows the demo timeline by text and dates', async ({ page }) => {
+  await page.goto('/demo');
+  await page.locator('#filter-query').fill('bright video call');
+  await expect(page.locator('#record-count')).toHaveText('1 observation');
+  await expect(page.getByRole('heading', { name: 'Headache behind left eye' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Dizziness after standing' })).toHaveCount(0);
+
+  await page.locator('#filter-query').fill('');
+  await page.locator('#filter-from').fill('2026-08-25');
+  await page.locator('#filter-to').fill('2026-08-25');
+  await expect(page.locator('#record-count')).toHaveText('1 observation');
+  await expect(page.getByRole('heading', { name: 'Dizziness after bus ride' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Headache behind left eye' })).toHaveCount(0);
+});
+
+test('@claim:backup-merge preserves current history and applies newer backup edits', async ({ page }) => {
+  await page.goto('/demo');
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export backup' }).click();
+  const download = await downloadPromise;
+  const backup = JSON.parse(Buffer.concat(await (await download.createReadStream())!.toArray()).toString('utf8')) as {
+    version: number;
+    observations: Array<{ id: string; symptom: string; updatedAt: string; [key: string]: unknown }>;
+  };
+  const current = backup.observations.find((entry) => entry.id === 'demo-dizziness-1');
+  expect(current).toBeDefined();
+  if (!current) throw new Error('The shipped sample observation is missing from its backup.');
+
+  const stale = { ...current, symptom: 'Stale imported wording', updatedAt: '2025-01-01T00:00:00.000Z' };
+  await page.locator('#import-json').setInputFiles({
+    name: 'stale-backup.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({ version: 1, observations: [stale] }))
+  });
+  await expect(page.getByText('Backup merged: 0 added, 0 updated.')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Dizziness after standing' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Stale imported wording' })).toHaveCount(0);
+
+  const newer = { ...current, symptom: 'Updated through backup merge', updatedAt: '2027-01-01T00:00:00.000Z' };
+  await page.locator('#import-json').setInputFiles({
+    name: 'newer-backup.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({ version: 1, observations: [newer] }))
+  });
+  await expect(page.getByText('Backup merged: 0 added, 1 updated.')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Updated through backup merge' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Dizziness after bus ride' })).toBeVisible();
+});
+
+test('@claim:plus-settings saves reusable presets and a personalized brief heading', async ({ page }) => {
+  await page.route('https://api.sociobot.in/api/v1/products/symptom-visit-brief/verify**', async (route) => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ valid: true, reason: 'ok', expires_at: null }) });
+  });
+  await page.goto('/demo?license=demo-plus-license');
+  await expect(page.getByText('Brief Plus is unlocked on this device.')).toBeVisible();
+  await page.locator('#plus-settings input[name="briefTitle"]').fill('Notes for my next visit');
+  await page.locator('#plus-settings input[name="presets"]').fill('Morning dizziness, After lunch fatigue');
+  await page.getByRole('button', { name: 'Save Plus settings' }).click();
+  await expect(page.locator('.brief-paper h3')).toHaveText('Notes for my next visit');
+  await expect(page.getByRole('button', { name: 'Morning dizziness' })).toBeVisible();
+
+  await page.reload();
+  await expect(page.locator('.brief-paper h3')).toHaveText('Notes for my next visit');
+  await page.getByRole('button', { name: 'Morning dizziness' }).click();
+  await expect(page.locator('#symptom')).toHaveValue('Morning dizziness');
+});
+
+test('@claim:license-verification sends only a license token and caches the daily result', async ({ page }) => {
+  const verificationRequests: Array<{ url: string; method: string; body: string | null }> = [];
+  await page.route('https://api.sociobot.in/api/v1/products/symptom-visit-brief/verify**', async (route) => {
+    const request = route.request();
+    verificationRequests.push({ url: request.url(), method: request.method(), body: request.postData() });
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ valid: true, reason: 'ok', expires_at: null }) });
+  });
+  await page.goto('/demo?license=demo-license-token');
+  await expect(page.getByText('Brief Plus is unlocked on this device.')).toBeVisible();
+  await expect.poll(() => verificationRequests).toHaveLength(1);
+  expect(verificationRequests[0]).toEqual({
+    url: 'https://api.sociobot.in/api/v1/products/symptom-visit-brief/verify?license=demo-license-token',
+    method: 'GET',
+    body: null
+  });
+
+  await page.reload();
+  await page.waitForTimeout(250);
+  expect(verificationRequests).toHaveLength(1);
 });
 
 test('records, persists, filters, exports, and meets the core accessibility baseline', async ({ page }) => {
@@ -153,24 +272,26 @@ test('uses a 3:1-or-better teal keyboard focus outline in light and dark themes'
 });
 
 test('legal and 404 pages are delivered with valid landmarks', async ({ page }) => {
-  for (const path of ['/privacy/', '/terms/', '/404.html']) {
+  for (const path of ['/privacy/', '/terms/', '/not-a-real-page']) {
     await page.goto(path);
     await expect(page.locator('main')).toHaveCount(1);
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
   }
-  await expect(page.getByRole('heading', { name: 'This page is not in your timeline.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'This page was not found.' })).toBeVisible();
 });
 
-test('production deployment policy serves the styled 404 and secure cache headers', async () => {
-  const policy = JSON.parse(await readFile('dist/staticwebapp.config.json', 'utf8')) as {
-    routes: Array<{ route: string; rewrite?: string; headers?: Record<string, string> }>;
-    responseOverrides: Record<string, { rewrite: string; statusCode: number }>;
-  };
-  expect(policy.responseOverrides['404']).toEqual({ rewrite: '/404.html', statusCode: 404 });
-  expect(policy.routes.find((route) => route.route === '/demo')?.rewrite).toBe('/index.html');
-  expect(policy.routes.find((route) => route.route === '/assets/*')?.headers?.['Cache-Control']).toContain('immutable');
-  expect(policy.routes.find((route) => route.route === '/sw.js')?.headers?.['Cache-Control']).toContain('no-cache');
-  expect(policy.routes.find((route) => route.route === '/*')?.headers?.['Content-Security-Policy']).toContain("default-src 'self'");
+test('host-equivalent preview applies security headers to demo and hides deployment configuration', async ({ request }) => {
+  const demo = await request.get('/demo');
+  expect(demo.status()).toBe(200);
+  expect(demo.headers()['content-security-policy']).toContain("default-src 'self'");
+  expect(demo.headers()['permissions-policy']).toContain('camera=()');
+  expect(demo.headers()['referrer-policy']).toBe('strict-origin-when-cross-origin');
+
+  const configuration = await request.get('/staticwebapp.config.json');
+  expect(configuration.status()).toBe(404);
+
+  const notFound = await request.get('/not-a-real-page');
+  expect(notFound.status()).toBe(404);
 });
 
 test('accepts and verifies a returned Sociobot license', async ({ page }) => {

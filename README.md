@@ -9,9 +9,11 @@ Live product: <https://symptom-visit-brief.sociobot.in>
 - Records date/time, symptom, severity, duration, context, and an optional photo.
 - Filters a chronological timeline by dates or text.
 - Exports CSV, a one-page PDF, and a JSON backup.
+- Imports a backup without erasing existing history; newer edits replace older copies.
 - Works offline after the first visit.
 - Records stay in this browser unless you export them.
 - Core features are free. Brief Plus costs $9 once.
+- Brief Plus saves symptom presets and a personalized brief heading.
 
 This is a memory aid, not medical advice or a diagnostic device.
 

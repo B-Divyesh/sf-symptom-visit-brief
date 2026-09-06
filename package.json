@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build && node scripts/build-sw.mjs",
     "preview": "vite preview",
+    "preview:static": "node scripts/preview-static.mjs --host 127.0.0.1 --port 4173",
     "test": "vitest run",
     "test:e2e": "npm run build && playwright test",
     "check": "tsc --noEmit && npm test && npm run build"

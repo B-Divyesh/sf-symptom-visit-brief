@@ -9,7 +9,10 @@ const walk = async (directory) => {
   for (const entry of entries) {
     const path = join(directory, entry.name);
     if (entry.isDirectory()) files.push(...await walk(path));
-    else if (entry.name !== 'sw.js' && !entry.name.endsWith('.map')) files.push(`/${relative(root, path).replaceAll('\\', '/')}`);
+    // Static Web Apps reads this deployment configuration but deliberately
+    // does not publish it. Precaching it makes cache.addAll reject on the
+    // public host and aborts service-worker installation.
+    else if (entry.name !== 'sw.js' && entry.name !== 'staticwebapp.config.json' && !entry.name.endsWith('.map')) files.push(`/${relative(root, path).replaceAll('\\', '/')}`);
   }
   return files;
 };

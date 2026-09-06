@@ -50,9 +50,44 @@
   },
   {
     "id": "plus-price",
-    "claim": "Brief Plus costs $9 once",
+    "claim": "Core capture and exports are free; Brief Plus costs $9 once",
     "where": "landing plain facts, Brief Plus section, README, terms",
     "test": "npm run test:e2e -- --grep @claim:plus-price",
     "sandbox": "fresh browser context; use /demo; assert the $9 one-time price and checkout path are visible"
+  },
+  {
+    "id": "observation-details",
+    "claim": "Records date, time, symptom, severity, duration, context, and an optional photo",
+    "where": "check-in form, README",
+    "test": "npm run test:e2e -- --grep @claim:observation-details",
+    "sandbox": "fresh browser context; use /demo; save an observation with every field and a PNG photo; reload and assert the saved timeline details and photo"
+  },
+  {
+    "id": "timeline-filters",
+    "claim": "Filters the chronological timeline by dates or text",
+    "where": "timeline filters, README",
+    "test": "npm run test:e2e -- --grep @claim:timeline-filters",
+    "sandbox": "fresh browser context; use /demo; filter the shipped observations once by context text and once by an inclusive date range"
+  },
+  {
+    "id": "backup-merge",
+    "claim": "Merging a backup keeps current history and uses newer edits",
+    "where": "backup section, README",
+    "test": "npm run test:e2e -- --grep @claim:backup-merge",
+    "sandbox": "fresh browser context; use /demo; import an older copy of a sample then a newer copy; assert the old copy does not replace it, the newer copy does, and another current sample remains"
+  },
+  {
+    "id": "plus-settings",
+    "claim": "Brief Plus saves reusable symptom presets and a personalized brief heading",
+    "where": "Brief Plus section, README, terms",
+    "test": "npm run test:e2e -- --grep @claim:plus-settings",
+    "sandbox": "fresh browser context; use /demo with a mocked valid license; save a preset and heading, reload, and assert both remain usable"
+  },
+  {
+    "id": "license-verification",
+    "claim": "Brief Plus verification sends only the license token and caches its result for a day",
+    "where": "privacy",
+    "test": "npm run test:e2e -- --grep @claim:license-verification",
+    "sandbox": "fresh browser context; use /demo with a mocked valid license; record verification requests, assert its GET contains only the license token, then reload and assert the cached daily verdict avoids another request"
   }
 ]

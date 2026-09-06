@@ -1,4 +1,10 @@
 {
+  "globalHeaders": {
+    "Content-Security-Policy": "default-src 'self'; base-uri 'self'; connect-src 'self' https://api.sociobot.in https://pilot-api.sociobot.in; font-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: blob:; manifest-src 'self'; object-src 'none'; script-src 'self'; style-src 'self'; worker-src 'self'",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "X-Content-Type-Options": "nosniff",
+    "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=()"
+  },
   "routes": [
     {
       "route": "/demo",
@@ -20,15 +26,6 @@
       "route": "/sw.js",
       "headers": {
         "Cache-Control": "no-cache, no-store, must-revalidate"
-      }
-    },
-    {
-      "route": "/*",
-      "headers": {
-        "Content-Security-Policy": "default-src 'self'; base-uri 'self'; connect-src 'self' https://api.sociobot.in https://pilot-api.sociobot.in; font-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: blob:; manifest-src 'self'; object-src 'none'; script-src 'self'; style-src 'self'; worker-src 'self'",
-        "Referrer-Policy": "strict-origin-when-cross-origin",
-        "X-Content-Type-Options": "nosniff",
-        "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=()"
       }
     }
   ],

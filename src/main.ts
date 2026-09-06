@@ -193,7 +193,7 @@ const renderShell = (): void => {
       <section class="brief-section" id="brief" aria-labelledby="brief-title">
         <div class="brief-intro">
           <p class="step">03 · Prepare</p>
-          <h2 id="brief-title">Bring the pattern, not the pile.</h2>
+          <h2 id="brief-title">Prepare a visit brief</h2>
           <p>Your current date and search filters define this brief. The one-page PDF keeps the scan concise; CSV keeps every matching detail.</p>
         </div>
         <div class="brief-preview" id="brief-preview"></div>
@@ -205,7 +205,7 @@ const renderShell = (): void => {
       </section>
 
       <section class="ownership-section" aria-labelledby="ownership-title">
-        <div><p class="step">Your data</p><h2 id="ownership-title">Keep a backup you control.</h2><p>Export a complete JSON backup, including local photos, or merge one back into this browser. Newer edits win; existing history is not erased.</p></div>
+          <div><p class="step">Your data</p><h2 id="ownership-title">Export and merge a backup</h2><p>Export a complete JSON backup or merge one back into this browser. Newer edits win; existing history is not erased.</p></div>
         <div class="ownership-actions">
           <button class="button secondary" id="export-json" type="button">Export backup</button>
           <label class="button quiet file-button">Import backup<input id="import-json" type="file" accept="application/json,.json" /></label>
@@ -214,12 +214,12 @@ const renderShell = (): void => {
 
       <section class="plus-section" aria-labelledby="plus-title">
         <div class="plus-mark">${icon('lock')}</div>
-        <div class="plus-copy"><p class="step">One-time unlock</p><h2 id="plus-title">Brief Plus</h2><p>Save reusable symptom presets and personalize the heading on your visit brief. The diary and every export remain free.</p><p><strong>$9 once.</strong> No account and no subscription.</p></div>
+        <div class="plus-copy"><p class="step">One-time unlock</p><h2 id="plus-title">Brief Plus</h2><p>Save reusable symptom presets and personalize the heading on your visit brief. The diary and every export remain free.</p><p><strong>$9 once.</strong> One-time purchase.</p></div>
         <div id="license-panel" class="license-panel"></div>
       </section>
     </main>
     <footer>
-      <div><span class="wordmark footer-mark"><span class="mark" aria-hidden="true"><i></i></span><span>Symptom Visit Brief</span></span><p>Private notes, shaped for a useful conversation.</p></div>
+      <div><span class="wordmark footer-mark"><span class="mark" aria-hidden="true"><i></i></span><span>Symptom Visit Brief</span></span><p>Private symptom notes for clinician visits.</p></div>
       <nav aria-label="Legal and product links"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/B-Divyesh/sf-symptom-visit-brief" rel="noreferrer">Source</a></nav>
       <p class="provenance">The paper constellation illustration was generated for this product with the Sociobot factory image model. <span>Version 1.0.1 · Built by Param Factory.</span></p>
     </footer>
@@ -282,7 +282,7 @@ const renderTimeline = (): void => {
 
   const list = byId<HTMLDivElement>('timeline-list');
   if (!observations.length) {
-    list.innerHTML = `<div class="empty-state"><span class="empty-orbit" aria-hidden="true"><i></i></span><h3>Your first point starts the pattern.</h3><p>Record one observation while the details are still fresh. It will appear here, ready for your brief.</p><a class="button primary" href="#check-in">Record the first observation</a></div>`;
+    list.innerHTML = `<div class="empty-state"><span class="empty-orbit" aria-hidden="true"><i></i></span><h3>Your saved observations appear here.</h3><p>Record one observation while the details are still fresh. It will appear here, ready for your brief.</p><a class="button primary" href="#check-in">Record the first observation</a></div>`;
   } else if (!entries.length) {
     list.innerHTML = `<div class="empty-state filtered"><h3>No observations match.</h3><p>Try a wider date range or clear the search. Your saved records have not changed.</p><button class="button secondary" type="button" id="empty-clear">Clear filters</button></div>`;
     byId<HTMLButtonElement>('empty-clear').addEventListener('click', clearFilters);
@@ -347,7 +347,7 @@ const renderLicense = (notice = ''): void => {
     panel.innerHTML = `
       ${notice ? `<p class="license-notice" role="status">${escapeHtml(notice)}</p>` : ''}
       <a class="button plus-button" href="${checkoutUrl}">Unlock Brief Plus · $9</a>
-      <details><summary>Already purchased?</summary><form id="restore-form"><label>License token<input name="license" autocomplete="off" required /></label><button class="button secondary" type="submit">Verify license</button><p class="field-help">Your token is stored only in this browser.</p></form></details>
+      <details><summary>Already purchased?</summary><form id="restore-form"><label>License token<input name="license" autocomplete="off" required /></label><button class="button secondary" type="submit" aria-label="Verify license">Verify license</button><p class="field-help">Your token is stored only in this browser.</p></form></details>
       <p class="merchant-note">One-time purchase. Sociobot / Dodo is the merchant of record; refunds are handled there. <a href="/terms/">Terms</a></p>`;
     byId<HTMLFormElement>('restore-form').addEventListener('submit', async (event) => {
       event.preventDefault();
